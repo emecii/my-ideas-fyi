@@ -108,7 +108,7 @@
     },
     {
       "id": "4",
-      "title": "Add image/video upload to feedback",
+      "title": "Add image/video upload to idea",
       "category": "enhancement",
       "upvotes": 51,
       "status": "suggestion",
@@ -116,7 +116,7 @@
       "comments": [
         {
           "id": "6",
-          "content": "Right now, there is no ability to add images while giving feedback which isn't ideal because I have to use another app to show what I mean",
+          "content": "Right now, there is no ability to add images while giving idea which isn't ideal because I have to use another app to show what I mean",
           "user": {
             "image": "./assets/user-images/image-javier.jpg",
             "name": "Javier Pollard",

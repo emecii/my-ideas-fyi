@@ -1,40 +1,40 @@
 import { Params, ActionFunctionArgs, defer } from "react-router-dom";
 import {
-  Feedback,
-  FeedbackDetails,
+  Idea,
+  IdeaDetails,
   Comment,
   CommentReply,
-} from "src/interfaces/Feedback";
+} from "src/interfaces/Idea";
 import {
   getCurrentUser,
-  getFeedbackById,
+  getIdeaById,
   updateCurrentUser,
-  updateFeedbackById,
-} from "@api/FeedbackAPI";
-import FeedbackDetailsPage from "../../pages/FeedbackDetails";
+  updateIdeaById,
+} from "@api/IdeaAPI";
+import IdeaDetailsPage from "../../pages/IdeaDetails";
 
 interface LoaderFunctionArgs {
   params: Params;
 }
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const feedback = getFeedbackById(params.feedbackId);
+  const idea = getIdeaById(params.ideaId);
   const currentUser = getCurrentUser();
 
-  return defer({ data: Promise.all([feedback, currentUser]) });
+  return defer({ data: Promise.all([idea, currentUser]) });
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  if (!params.feedbackId) {
-    throw new Error("Feedback id missing");
+  if (!params.ideaId) {
+    throw new Error("Idea id missing");
   }
-  const feedbackId = params.feedbackId;
+  const ideaId = params.ideaId;
   const formData = await request.formData();
   const intent = formData.get("intent");
   const currentUser = await getCurrentUser();
 
   if (intent === "addComment") {
-    const feedback = await getFeedbackById(params.feedbackId);
+    const idea = await getIdeaById(params.ideaId);
     const commentText = formData.get("comment")?.toString() ?? "";
     const comment: Comment = {
       id: crypto.randomUUID(),
@@ -45,17 +45,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
         username: currentUser.username,
       },
     };
-    return updateFeedbackById(params.feedbackId, {
+    return updateIdeaById(params.ideaId, {
       comments:
-        Array.isArray(feedback.comments) && feedback.comments.length > 0
-          ? feedback.comments?.concat(comment)
+        Array.isArray(idea.comments) && idea.comments.length > 0
+          ? idea.comments?.concat(comment)
           : [comment],
-    } as FeedbackDetails);
+    } as IdeaDetails);
   } else if (intent === "replyComment") {
-    const feedback = await getFeedbackById(params.feedbackId);
-    if (feedback.comments === undefined) {
+    const idea = await getIdeaById(params.ideaId);
+    if (idea.comments === undefined) {
       throw new Error(
-        `Feedback with id ${feedback.id} has no comments to reply to`
+        `Idea with id ${idea.id} has no comments to reply to`
       );
     }
     const content = formData.get("comment")?.toString() ?? "";
@@ -70,7 +70,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         username: currentUser.username,
       },
     };
-    const commentUpdated = feedback.comments?.find(
+    const commentUpdated = idea.comments?.find(
       (comment) => comment.id === commentId
     );
     if (commentUpdated === undefined) {
@@ -83,37 +83,37 @@ export async function action({ request, params }: ActionFunctionArgs) {
       commentUpdated.replies = [reply];
     }
 
-    return updateFeedbackById(params.feedbackId, {
-      comments: feedback.comments.map((comment) => {
+    return updateIdeaById(params.ideaId, {
+      comments: idea.comments.map((comment) => {
         if (comment.id === commentId) {
           return commentUpdated;
         }
         return comment;
       }),
-    } as FeedbackDetails);
+    } as IdeaDetails);
   } else if (intent === "upVote") {
     const upVoted = formData.get("upVoted") === "true";
     const updatedCurrentUser = {
       ...currentUser,
       votes: upVoted
         ? currentUser.votes?.concat({
-            productRequestId: feedbackId,
+            productRequestId: ideaId,
             voted: "up",
           })
         : currentUser.votes?.filter(
-            (vote) => vote.productRequestId !== feedbackId
+            (vote) => vote.productRequestId !== ideaId
           ),
     };
 
     await updateCurrentUser(updatedCurrentUser);
-    return updateFeedbackById(params.feedbackId, {
+    return updateIdeaById(params.ideaId, {
       upvotes: Number(formData.get("upvotes")),
-    } as Feedback);
+    } as Idea);
   }
 
   return null;
 }
 
-export default function FeedbackDetailsRoute() {
-  return <FeedbackDetailsPage />;
+export default function IdeaDetailsRoute() {
+  return <IdeaDetailsPage />;
 }

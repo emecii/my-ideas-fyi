@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
-import { Feedback } from "src/interfaces/Feedback";
+import { Idea } from "src/interfaces/Idea";
 import Badge from "@components/Badge";
 import Card from "@components/Card";
 import styles from "./roadmapSummaryCard.module.css";
 
 interface RoadmapSummaryCardProps {
-  feedbackList: Feedback[];
+  ideaList: Idea[];
 }
 
-function RoadmapSummaryCard({ feedbackList }: RoadmapSummaryCardProps) {
-  const countByStatus = getCountbyStatus(feedbackList);
+function RoadmapSummaryCard({ ideaList }: RoadmapSummaryCardProps) {
+  const countByStatus = getCountbyStatus(ideaList);
   const statusList = [
     {
       text: "Planned",
@@ -58,15 +58,15 @@ function getCSSVariableValue(varName: string) {
   return style.getPropertyValue(varName);
 }
 
-function getCountbyStatus(feedbackList: Feedback[]) {
+function getCountbyStatus(ideaList: Idea[]) {
   const countByStatus = {
     suggestion: 0,
     planned: 0,
     "in-progress": 0,
     live: 0,
   };
-  feedbackList.forEach((feedback) => {
-    countByStatus[feedback.status] += 1;
+  ideaList.forEach((idea) => {
+    countByStatus[idea.status] += 1;
   });
 
   return countByStatus;

@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { Form, useNavigate, useNavigation } from "react-router-dom";
-import { Feedback, FeedbackStatus, FeedbackTag } from "src/interfaces/Feedback";
+import { Idea, IdeaStatus, IdeaTag } from "src/interfaces/Idea";
 import Select from "react-dropdown-select";
 import Button from "@components/Button";
-import styles from "./feedbackForm.module.css";
+import styles from "./ideaForm.module.css";
 
 const categories = [
-  { label: "Feature", value: "feature" },
-  { label: "UI", value: "ui" },
-  { label: "UX", value: "ux" },
-  { label: "Enhancement", value: "enhancement" },
-  { label: "Bug", value: "bug" },
+  { label: "All", value: "all" },
+  { label: "Gen AI", value: "Gen AI" },
+  { label: "Web3", value: "Web3" },
+  { label: "Social Networks", value: "Social Networks" },
+  { label: "FinTech", value: "FinTech" },
+  { label: "Developer Tools", value: "Developer Tools" },
 ];
 
 const statusList = [
@@ -20,22 +21,22 @@ const statusList = [
   { label: "Live", value: "live" },
 ];
 
-interface FeedbackFormProps {
-  defaultFeedback?: Feedback;
+interface IdeaFormProps {
+  defaultIdea?: Idea;
   editing?: boolean;
 }
 
-function FeedbackForm({ defaultFeedback, editing = false }: FeedbackFormProps) {
+function IdeaForm({ defaultIdea, editing = false }: IdeaFormProps) {
   const navigate = useNavigate();
   const submittingForm = useNavigation().state === "submitting";
-  const defaultCategory = defaultFeedback?.category ?? "Feature";
+  const defaultCategory = defaultIdea?.category ?? "All";
   const defaultCategoryValue = categories.find(
     (c) => c.value === defaultCategory
   );
-  const defaultStatus = defaultFeedback?.status ?? "suggestion";
+  const defaultStatus = defaultIdea?.status ?? "suggestion";
   const defaultStatusValue = statusList.find((c) => c.value === defaultStatus);
-  const [category, setCategory] = useState<FeedbackTag>(defaultCategory);
-  const [status, setStatus] = useState<FeedbackStatus>(defaultStatus);
+  const [category, setCategory] = useState<IdeaTag>(defaultCategory);
+  const [status, setStatus] = useState<IdeaStatus>(defaultStatus);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   function handleSubmitForm() {
@@ -52,20 +53,20 @@ function FeedbackForm({ defaultFeedback, editing = false }: FeedbackFormProps) {
       method="post"
     >
       <div className={styles.formElement}>
-        <label htmlFor="title">Feedback title</label>
+        <label htmlFor="summary">Idea summary</label>
         <p>Add a short, descriptive line</p>
         <input
           type="text"
           name="title"
           disabled={submittingForm}
-          defaultValue={defaultFeedback?.title}
+          defaultValue={defaultIdea?.title}
           required
         />
         <span className={styles.errorMsg}>Can&apos;t be empty</span>
       </div>
       <div className={styles.formElement}>
         <label htmlFor="title">Category</label>
-        <p>Choose a category for your feedback</p>
+        <p>Choose a category for your idea</p>
         <Select
           className={styles.select}
           dropdownGap={-60}
@@ -76,7 +77,7 @@ function FeedbackForm({ defaultFeedback, editing = false }: FeedbackFormProps) {
           }
           disabled={submittingForm}
           onChange={(values) => {
-            setCategory(values[0].value as FeedbackTag);
+            setCategory(values[0].value as IdeaTag);
           }}
           required
         />
@@ -99,7 +100,7 @@ function FeedbackForm({ defaultFeedback, editing = false }: FeedbackFormProps) {
             values={defaultStatusValue ? [defaultStatusValue] : [statusList[0]]}
             disabled={submittingForm}
             onChange={(values) => {
-              setStatus(values[0].value as FeedbackStatus);
+              setStatus(values[0].value as IdeaStatus);
             }}
             required
           />
@@ -113,14 +114,14 @@ function FeedbackForm({ defaultFeedback, editing = false }: FeedbackFormProps) {
       ) : null}
 
       <div className={styles.formElement}>
-        <label htmlFor="title">Feedback Detail</label>
+        <label htmlFor="title">Idea Details</label>
         <p>
           Include any specific comments on what should be improved, added, etc.
         </p>
         <textarea
           rows={4}
           name="description"
-          defaultValue={defaultFeedback?.description}
+          defaultValue={defaultIdea?.description}
           required
         ></textarea>
         <span className={styles.errorMsg}>Can&apos;t be empty</span>
@@ -147,7 +148,7 @@ function FeedbackForm({ defaultFeedback, editing = false }: FeedbackFormProps) {
           onClick={handleSubmitForm}
           block
         >
-          {submittingForm ? "Adding feedback..." : "Add Feedback"}
+          {submittingForm ? "Adding idea..." : "Add Idea"}
         </Button>
       )}
       <Button
@@ -174,4 +175,4 @@ function FeedbackForm({ defaultFeedback, editing = false }: FeedbackFormProps) {
   );
 }
 
-export default FeedbackForm;
+export default IdeaForm;

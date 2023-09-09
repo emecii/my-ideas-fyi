@@ -8,36 +8,36 @@ import {
 } from "react-router-dom";
 import {
   CurrentUser,
-  FeedbackDetails as IFeedbackDetails,
+  IdeaDetails as IIdeaDetails,
   Vote,
-} from "src/interfaces/Feedback";
+} from "src/interfaces/Idea";
 import { ReactComponent as ChevronLeftIcon } from "@assets/chevron-left-icon.svg";
-import FeedbackCard from "@components/FeedbackCard";
+import IdeaCard from "@components/IdeaCard";
 import Button from "@components/Button";
 import Card from "@components/Card";
 import Comment from "@components/Comment";
 import AddComment from "@components/AddComment";
 import Skeleton from "@components/Skeleton";
-import styles from "./feedbackDetails.module.css";
+import styles from "./ideaDetails.module.css";
 
-type FeedbackDetailsDataTuple = [IFeedbackDetails, CurrentUser];
-type FeedbackDetailsData = {
-  data: FeedbackDetailsDataTuple;
+type IdeaDetailsDataTuple = [IIdeaDetails, CurrentUser];
+type IdeaDetailsData = {
+  data: IdeaDetailsDataTuple;
 };
 
-function FeedbackDetailsPage() {
+function IdeaDetailsPage() {
   const navigate = useNavigate();
-  const { data } = useLoaderData() as FeedbackDetailsData;
+  const { data } = useLoaderData() as IdeaDetailsData;
 
   return (
-    <main className={styles.feedbackDetails}>
+    <main className={styles.ideaDetails}>
       <header>
         <Link to=".." onClick={() => navigate(-1)}>
           <ChevronLeftIcon /> Go Back
         </Link>
 
         <Button type="primaryBlue" to="edit">
-          Edit Feedback
+          Edit Idea
         </Button>
       </header>
       <Suspense
@@ -50,32 +50,32 @@ function FeedbackDetailsPage() {
         }
       >
         <Await resolve={data} errorElement={<p>Error loading home data</p>}>
-          <FeedbackDetails />
+          <IdeaDetails />
         </Await>
       </Suspense>
     </main>
   );
 }
 
-function FeedbackDetails() {
-  const [feedback, currentUser] = useAsyncValue() as FeedbackDetailsDataTuple;
+function IdeaDetails() {
+  const [idea, currentUser] = useAsyncValue() as IdeaDetailsDataTuple;
   const userVotes = currentUser.votes ?? [];
 
   return (
     <div className={styles.content}>
-      <FeedbackCard
-        feedback={feedback}
-        upVoted={isFeedbackUpVoted(userVotes, feedback.id)}
+      <IdeaCard
+        idea={idea}
+        upVoted={isIdeaUpVoted(userVotes, idea.id)}
       />
 
-      {feedback?.comments && feedback.comments.length > 0 ? (
+      {idea?.comments && idea.comments.length > 0 ? (
         <Card className={styles.comments}>
-          <h3>{feedback.comments.length} Comments</h3>
-          {feedback.comments.map((comment) => {
+          <h3>{idea.comments.length} Comments</h3>
+          {idea.comments.map((comment) => {
             return (
               <Comment
                 key={comment.id}
-                feedbackId={feedback.id}
+                ideaId={idea.id}
                 comment={comment}
                 className={styles.comment}
               />
@@ -86,15 +86,15 @@ function FeedbackDetails() {
 
       <Card className={`${styles.addComment}`}>
         <h3>Add Comment</h3>
-        <AddComment feedbackId={feedback.id} />
+        <AddComment ideaId={idea.id} />
       </Card>
     </div>
   );
 }
 
 // TODO: Move this unot a utils module maybe?
-function isFeedbackUpVoted(userVotes: Vote[], feedbackId: string): boolean {
-  return userVotes.some((vote) => vote.productRequestId === feedbackId);
+function isIdeaUpVoted(userVotes: Vote[], ideaId: string): boolean {
+  return userVotes.some((vote) => vote.productRequestId === ideaId);
 }
 
-export default FeedbackDetailsPage;
+export default IdeaDetailsPage;

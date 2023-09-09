@@ -1,6 +1,6 @@
-# Frontend Mentor - Product feedback app
+# Frontend Mentor - Product idea app
 
-![Design preview for the Product feedback app coding challenge](./preview.jpg)
+![Design preview for the Product idea app coding challenge](./preview.jpg)
 
 ## Welcome! 👋
 
@@ -12,7 +12,7 @@ Thanks for purchasing this premium Frontend Mentor coding challenge.
 
 ## The challenge
 
-Your challenge is to build out this product feedback application and get it looking as close to the design as possible.
+Your challenge is to build out this product idea application and get it looking as close to the design as possible.
 
 You can use any tools you like to help you complete the challenge. So if you've got something you'd like to practice, feel free to give it a go.
 
@@ -22,12 +22,12 @@ Your users should be able to:
 
 - View the optimal layout for the app depending on their device's screen size
 - See hover states for all interactive elements on the page
-- Create, read, update, and delete product feedback requests
-- Receive form validations when trying to create/edit feedback requests
+- Create, read, update, and delete product idea requests
+- Receive form validations when trying to create/edit idea requests
 - Sort suggestions by most/least upvotes and most/least comments
 - Filter suggestions by category
-- Add comments and replies to a product feedback request
-- Upvote product feedback requests
+- Add comments and replies to a product idea request
+- Upvote product idea requests
 - **Bonus**: Keep track of any changes, even after refreshing the browser (`localStorage` could be used for this if you're not building out a full-stack app)
 
 Want some support on the challenge? [Join our Slack community](https://www.frontendmentor.io/slack) and ask questions in the **#help** channel.
@@ -35,15 +35,15 @@ Want some support on the challenge? [Join our Slack community](https://www.front
 ### Expected Behaviour
 
 - Suggestions page
-  - Only product feedback requests with a status of `suggestion` should be shown on the Suggestions page.
+  - Only product idea requests with a status of `suggestion` should be shown on the Suggestions page.
 - Roadmap
-  - Feedback requests with a status of `planned`, `in-progress`, or `live` should show up on the roadmap, and should be placed in the correct column based on their status.
+  - Idea requests with a status of `planned`, `in-progress`, or `live` should show up on the roadmap, and should be placed in the correct column based on their status.
   - Columns should be ordered by upvote totals.
 - Creating a product request
-  - When creating a new piece of feedback, an ID needs to be assigned which increments the current highest product request ID by 1.
-  - The default status for a new piece of feedback is `suggestion`. This places it on the Suggestions page.
-- Editing feedback
-  - If a piece of feedback has its status updated to `planned`/`in-progress`/`live` it moves through to the roadmap and should show up in the correct column based on its new status.
+  - When creating a new piece of idea, an ID needs to be assigned which increments the current highest product request ID by 1.
+  - The default status for a new piece of idea is `suggestion`. This places it on the Suggestions page.
+- Editing idea
+  - If a piece of idea has its status updated to `planned`/`in-progress`/`live` it moves through to the roadmap and should show up in the correct column based on its new status.
 - Add comments/replies
   - Use the data from the `currentUser` object in the `data.json` file to populate the user data for any new comments or replies.
   - Any comment/reply can have a maximum of 250 characters.
@@ -89,7 +89,7 @@ Once you've added your information to the template, delete this file and rename 
 
 Submit your solution on the platform for the rest of the community to see. Follow our ["Complete guide to submitting solutions"](https://medium.com/frontend-mentor/a-complete-guide-to-submitting-solutions-on-frontend-mentor-ac6384162248) for tips on how to do this.
 
-Remember, if you're looking for feedback on your solution, be sure to ask questions when submitting it. The more specific and detailed you are with your questions, the higher the chance you'll get valuable feedback from the community.
+Remember, if you're looking for idea on your solution, be sure to ask questions when submitting it. The more specific and detailed you are with your questions, the higher the chance you'll get valuable idea from the community.
 
 **⚠️ IMPORTANT ⚠️: With these premium challenges, please be sure not to upload the design files to GitHub when you're submitting to the platform and sharing it around. If you've created a brand new project, the easiest way to do that is to copy across the `.gitignore` provided in this starter project.**
 
@@ -102,12 +102,12 @@ There are multiple places you can share your solution:
 3. Share your solution on other social channels like LinkedIn.
 4. Blog about your experience building your project. Writing about your workflow, technical choices, and talking through your code is a brilliant way to reinforce what you've learned. Great platforms to write on are [dev.to](https://dev.to/), [Hashnode](https://hashnode.com/), and [CodeNewbie](https://community.codenewbie.org/).
 
-We provide templates to help you share your solution once you've submitted it on the platform. Please do edit them and include specific questions when you're looking for feedback. 
+We provide templates to help you share your solution once you've submitted it on the platform. Please do edit them and include specific questions when you're looking for idea. 
 
-The more specific you are with your questions the more likely it is that another member of the community will give you feedback.
+The more specific you are with your questions the more likely it is that another member of the community will give you idea.
 
-## Got feedback for us?
+## Got idea for us?
 
-We love receiving feedback! We're always looking to improve our challenges and our platform. So if you have anything you'd like to mention, please email hi[at]frontendmentor[dot]io.
+We love receiving idea! We're always looking to improve our challenges and our platform. So if you have anything you'd like to mention, please email hi[at]frontendmentor[dot]io.
 
 **Have fun building!** 🚀

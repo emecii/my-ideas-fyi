@@ -17,7 +17,7 @@ function TagsCard({ className = "", defaultTag = "All" }) {
     new URLSearchParams(navigation.location.search).has("q");
 
   // TODO: Get this data from API, localstorage or somewhere else
-  const tags = ["All", "UI", "UX", "Enhancement", "Bug", "Feature"];
+  const tags = ["All", "Gen AI", "Web3", "Social Networks", "FinTech", "Developer Tools"];
 
   const handleCheckTag = (tag: string) => {
     const searchParamsObj = Object.fromEntries(searchParams);

@@ -1,5 +1,5 @@
 import { MouseEventHandler } from "react";
-import { User } from "src/interfaces/Feedback";
+import { User } from "src/interfaces/Idea";
 import Button from "@components/Button";
 import styles from "./comment.module.css";
 

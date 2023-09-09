@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Comment } from "src/interfaces/Feedback";
+import { Comment } from "src/interfaces/Idea";
 import AvatarTestImage from "@assets/avatar-test.png";
 import CommentReply from "./CommentReply";
 import CommentHeader from "./CommentHeader";
@@ -8,11 +8,11 @@ import styles from "./comment.module.css";
 
 interface CommentProps {
   comment: Comment;
-  feedbackId: string;
+  ideaId: string;
   className?: string;
 }
 
-function Comment({ comment, feedbackId, className = "" }: CommentProps) {
+function Comment({ comment, ideaId, className = "" }: CommentProps) {
   const { user, content, replies = [] } = comment;
   const [replyFormVisible, setReplyFormVisible] = useState(false);
 
@@ -31,7 +31,7 @@ function Comment({ comment, feedbackId, className = "" }: CommentProps) {
           style={{ display: replyFormVisible ? "block" : "none" }}
         >
           <AddComment
-            feedbackId={feedbackId}
+            ideaId={ideaId}
             commentId={comment.id}
             onCommentSubmitted={() => setReplyFormVisible(false)}
           />
@@ -44,7 +44,7 @@ function Comment({ comment, feedbackId, className = "" }: CommentProps) {
               <CommentReply
                 key={reply.id}
                 reply={reply}
-                feedbackId={feedbackId}
+                ideaId={ideaId}
                 commentId={comment.id}
               />
             );

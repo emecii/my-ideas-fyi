@@ -1,8 +1,8 @@
-.feedbackNew {
+.ideaNew {
   margin: 1.5rem;
 }
 
-.feedbackNew main {
+.ideaNew main {
   position: relative;
 }
 
@@ -24,7 +24,7 @@
   justify-content: center;
 }
 
-.feedbackNew header {
+.ideaNew header {
   height: 40px;
   display: flex;
   align-items: center;
@@ -32,14 +32,14 @@
   margin-bottom: 2.75rem;
 }
 
-.feedbackNew header a {
+.ideaNew header a {
   font-size: 0.8125rem;
   font-weight: 700;
   color: var(--gray-dark-c);
   text-decoration: none;
 }
 
-.feedbackNew h3 {
+.ideaNew h3 {
   margin-top: 1.25rem;
   margin-bottom: 1.5rem;
 }

@@ -1,21 +1,21 @@
-.feedbackCard aside {
+.ideaCard aside {
   display: none;
 }
 
-.feedbackCard h4 {
+.ideaCard h4 {
   margin-bottom: 0.75rem;
 }
 
-.feedbackCard p {
+.ideaCard p {
   margin-bottom: 0.5rem;
 }
 
-.feedbackCardTag {
+.ideaCardTag {
   text-transform: capitalize;
   margin-bottom: 1rem;
 }
 
-.feedbackCard footer {
+.ideaCard footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -32,39 +32,39 @@
 /* TODO: This might improve it I used css grid instead of flex */
 
 @media (min-width: 768px) {
-  .feedbackCard {
+  .ideaCard {
     display: flex;
     column-gap: 2.5rem;
     padding: 1.75rem 2rem;
   }
-  .feedbackCard > aside {
+  .ideaCard > aside {
     display: flex;
     align-items: center;
     max-width: 2.5rem;
   }
-  .feedbackCard > div > aside {
+  .ideaCard > div > aside {
     display: flex;
     align-items: flex-start;
     max-width: 2.5rem;
   }
-  .feedbackCard > div {
+  .ideaCard > div {
     flex: 1;
     display: flex;
     column-gap: 2.5rem;
   }
-  .feedbackCardTag {
+  .ideaCardTag {
     margin-bottom: 0;
   }
-  .feedbackCard footer > label {
+  .ideaCard footer > label {
     display: none;
   }
-  .feedbackCard footer {
+  .ideaCard footer {
     display: none;
   }
-  .feedbackCard h4 {
+  .ideaCard h4 {
     margin-bottom: 0.25rem;
   }
-  .feedbackCard p {
+  .ideaCard p {
     margin-bottom: 0.75rem;
   }
   .commentBubble {

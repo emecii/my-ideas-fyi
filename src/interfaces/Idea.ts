@@ -1,28 +1,28 @@
-export type FeedbackTag =
+export type IdeaTag =
   | "All"
-  | "UI"
-  | "UX"
-  | "Enhancement"
-  | "Bug"
-  | "Feature";
+  | "Gen AI"
+  | "Web3"
+  | "Social Networks"
+  | "FinTech"
+  | "Developer Tools";
 
-export type FeedbackStatus = "planned" | "in-progress" | "live" | "suggestion";
+export type IdeaStatus = "planned" | "in-progress" | "live" | "suggestion";
 
-export interface Feedback {
+export interface Idea {
   id: string;
   title: string;
-  category: FeedbackTag;
+  category: IdeaTag;
   upvotes: number;
-  status: FeedbackStatus;
+  status: IdeaStatus;
   description: string;
   commentCount: number;
 }
 
-export interface FeedbackDetails extends Feedback {
+export interface IdeaDetails extends Idea {
   comments?: Comment[];
 }
 
-export interface FeedbackAPIResponse {
+export interface IdeaAPIResponse {
   currentUser: CurrentUser;
   productRequests: ProductRequest[];
 }
@@ -57,9 +57,9 @@ export interface CommentReply {
 export interface ProductRequest {
   id: string;
   title: string;
-  category: FeedbackTag;
+  category: IdeaTag;
   upvotes: number;
-  status: FeedbackStatus;
+  status: IdeaStatus;
   description: string;
   comments?: Comment[];
 }

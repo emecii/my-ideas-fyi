@@ -1,19 +1,19 @@
 import {
   CurrentUser,
-  Feedback,
-  FeedbackAPIResponse,
-  FeedbackDetails,
-  FeedbackStatus,
+  Idea,
+  IdeaAPIResponse,
+  IdeaDetails,
+  IdeaStatus,
   ProductRequest,
-} from "src/interfaces/Feedback";
+} from "src/interfaces/Idea";
 
-async function getFeedbackList(
+async function getIdeaList(
   query?: string,
   sortBy?: string,
-  status?: FeedbackStatus
-): Promise<Feedback[]> {
+  status?: IdeaStatus
+): Promise<Idea[]> {
   const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: FeedbackAPIResponse = JSON.parse(dataStr ?? "");
+  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
   const productRequests: ProductRequest[] = data.productRequests.filter(
     (pr) => {
       let validPR = true;
@@ -34,14 +34,14 @@ async function getFeedbackList(
 
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(adaptProductRequestsToFeedbackList(sortedProductRequests));
+      resolve(adaptProductRequestsToIdeaList(sortedProductRequests));
     }, 1000);
   });
 }
 
 async function getCurrentUser(): Promise<CurrentUser> {
   const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: FeedbackAPIResponse = JSON.parse(dataStr ?? "");
+  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
   const currentUser = data.currentUser;
 
   return new Promise((resolve) => {
@@ -51,47 +51,47 @@ async function getCurrentUser(): Promise<CurrentUser> {
   });
 }
 
-async function getFeedbackById(
+async function getIdeaById(
   id: string | undefined
-): Promise<FeedbackDetails> {
+): Promise<IdeaDetails> {
   if (id === undefined) {
-    throw new Error("There was no id provided to get the feedback item.");
+    throw new Error("There was no id provided to get the idea item.");
   }
   const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: FeedbackAPIResponse = JSON.parse(dataStr ?? "");
+  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
   const productRequests: ProductRequest[] = data.productRequests;
   const productRequestItem = productRequests.find((pr) => pr.id === id) ?? null;
   if (productRequestItem === null) {
-    throw new Error(`Feedback item with id ${id} was not found`);
+    throw new Error(`Idea item with id ${id} was not found`);
   }
   // TODO: Implement rejection too
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(adaptProductRequestToFeedbackDetails(productRequestItem));
+      resolve(adaptProductRequestToIdeaDetails(productRequestItem));
     }, 1000);
   });
 }
 
-async function updateFeedbackById(
+async function updateIdeaById(
   id: string | undefined,
-  feedbackUpdated: Feedback
-): Promise<Feedback> {
+  ideaUpdated: Idea
+): Promise<Idea> {
   if (id === undefined) {
-    throw new Error("There was no id provided to get the feedback item.");
+    throw new Error("There was no id provided to get the idea item.");
   }
   const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: FeedbackAPIResponse = JSON.parse(dataStr ?? "");
+  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
   const productRequests: ProductRequest[] = data.productRequests;
   const productRequestItem = productRequests.find((pr) => pr.id === id) ?? null;
   if (productRequestItem === null) {
-    throw new Error(`Feedback item with id ${id} was not found`);
+    throw new Error(`Idea item with id ${id} was not found`);
   }
-  Object.assign(productRequestItem, feedbackUpdated);
+  Object.assign(productRequestItem, ideaUpdated);
   localStorage.setItem("data", JSON.stringify({ ...data, productRequests }));
   // TODO: Implement rejection too
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(productRequestItem as FeedbackDetails);
+      resolve(productRequestItem as IdeaDetails);
     }, 1000);
   });
 }
@@ -100,7 +100,7 @@ async function updateCurrentUser(
   currentUserUpdated: CurrentUser
 ): Promise<CurrentUser> {
   const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: FeedbackAPIResponse = JSON.parse(dataStr ?? "");
+  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
   const currentUser = data.currentUser;
 
   Object.assign(currentUser, currentUserUpdated);
@@ -108,18 +108,18 @@ async function updateCurrentUser(
   // TODO: Implement rejection too
   // return new Promise((resolve, reject) => {
   //   setTimeout(() => {
-  //     resolve(productRequestItem as FeedbackDetails);
+  //     resolve(productRequestItem as IdeaDetails);
   //   }, 1000);
   // });
   return currentUser;
 }
 
-async function addNewFeedback(feedback: Feedback): Promise<ProductRequest> {
+async function addNewIdea(idea: Idea): Promise<ProductRequest> {
   const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: FeedbackAPIResponse = JSON.parse(dataStr ?? "");
+  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
   const productRequests: ProductRequest[] = data.productRequests;
   const productRequest = {
-    ...feedback,
+    ...idea,
     comments: [],
   } as ProductRequest;
 
@@ -133,17 +133,17 @@ async function addNewFeedback(feedback: Feedback): Promise<ProductRequest> {
   // TODO: Implement rejection too
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(feedback);
+      resolve(idea);
     }, 1000);
   });
 }
 
-async function deleteFeedback(id: string | undefined) {
+async function deleteIdea(id: string | undefined) {
   if (id === undefined) {
-    throw new Error("There was no id provided to get the feedback item.");
+    throw new Error("There was no id provided to get the idea item.");
   }
   const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: FeedbackAPIResponse = JSON.parse(dataStr ?? "");
+  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
   const productRequests: ProductRequest[] = data.productRequests.filter(
     (pr) => pr.id !== id
   );
@@ -152,7 +152,7 @@ async function deleteFeedback(id: string | undefined) {
   // TODO: Implement rejection too
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(`Feedback item with id: ${id} was successfully deleted.`);
+      resolve(`Idea item with id: ${id} was successfully deleted.`);
     }, 1000);
   });
 }
@@ -185,9 +185,9 @@ function sortByVotesOrComments(
 
 // Adapters
 
-function adaptProductRequestToFeedbackDetails(
+function adaptProductRequestToIdeaDetails(
   productRequest: ProductRequest
-): FeedbackDetails {
+): IdeaDetails {
   return {
     id: productRequest.id,
     title: productRequest.title,
@@ -201,9 +201,9 @@ function adaptProductRequestToFeedbackDetails(
   };
 }
 
-function adaptProductRequestToFeedback(
+function adaptProductRequestToIdea(
   productRequest: ProductRequest
-): Feedback {
+): Idea {
   return {
     id: productRequest.id,
     title: productRequest.title,
@@ -216,19 +216,19 @@ function adaptProductRequestToFeedback(
   };
 }
 
-function adaptProductRequestsToFeedbackList(
+function adaptProductRequestsToIdeaList(
   productRequests: ProductRequest[]
-): Feedback[] {
+): Idea[] {
   return productRequests.map((productRequest) => {
-    return adaptProductRequestToFeedback(productRequest);
+    return adaptProductRequestToIdea(productRequest);
   });
 }
 export {
-  getFeedbackList,
+  getIdeaList,
   getCurrentUser,
-  getFeedbackById,
-  addNewFeedback,
-  updateFeedbackById,
+  getIdeaById,
+  addNewIdea,
+  updateIdeaById,
   updateCurrentUser,
-  deleteFeedback,
+  deleteIdea,
 };

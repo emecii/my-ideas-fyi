@@ -4,14 +4,14 @@ import styles from "./voteButton.module.css";
 
 interface VoteButtonProps {
   className?: string;
-  feedbackId: string;
+  ideaId: string;
   count?: number;
   upVoted?: boolean;
 }
 
 function VoteButton({
   className = "",
-  feedbackId,
+  ideaId,
   count = 0,
   upVoted = false,
 }: VoteButtonProps) {
@@ -43,7 +43,7 @@ function VoteButton({
             {
               upVoted: (upvotes > count).toString(),
               upvotes: upvotes.toString(),
-              feedbackId: feedbackId.toString(),
+              ideaId: ideaId.toString(),
               intent: "upVote",
             },
             { method: "put" }

@@ -4,17 +4,17 @@ import RootRoute, {
   loader as homeLoader,
   action as homeAction,
 } from "./routes";
-import FeedbackDetailsRoute, {
-  loader as feedbackDetailsLoader,
-  action as feedbackDetailsAction,
-} from "./routes/feedback";
-import FeedbackNewRoute, {
-  action as feedbackNewAction,
-} from "./routes/feedback/new";
-import FeedbackEditRoute, {
-  loader as feedbackEditLoader,
-  action as feedbackEditAction,
-} from "./routes/feedback/edit";
+import IdeaDetailsRoute, {
+  loader as ideaDetailsLoader,
+  action as ideaDetailsAction,
+} from "./routes/idea";
+import IdeaNewRoute, {
+  action as ideaNewAction,
+} from "./routes/idea/new";
+import IdeaEditRoute, {
+  loader as ideaEditLoader,
+  action as ideaEditAction,
+} from "./routes/idea/edit";
 import RoadmapRoute from "./routes/roadmap";
 import dataJSON from "./data.json";
 
@@ -38,21 +38,21 @@ function App() {
         action: homeAction,
       },
       {
-        path: "/feedback/new",
-        element: <FeedbackNewRoute />,
-        action: feedbackNewAction,
+        path: "/idea/new",
+        element: <IdeaNewRoute />,
+        action: ideaNewAction,
       },
       {
-        path: "/feedback/:feedbackId",
-        element: <FeedbackDetailsRoute />,
-        loader: feedbackDetailsLoader,
-        action: feedbackDetailsAction,
+        path: "/idea/:ideaId",
+        element: <IdeaDetailsRoute />,
+        loader: ideaDetailsLoader,
+        action: ideaDetailsAction,
       },
       {
-        path: "/feedback/:feedbackId/edit",
-        element: <FeedbackEditRoute />,
-        loader: feedbackEditLoader,
-        action: feedbackEditAction,
+        path: "/idea/:ideaId/edit",
+        element: <IdeaEditRoute />,
+        loader: ideaEditLoader,
+        action: ideaEditAction,
       },
       {
         path: "/roadmap",

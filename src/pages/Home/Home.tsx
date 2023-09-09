@@ -7,14 +7,14 @@ import {
   useSearchParams,
   useSubmit,
 } from "react-router-dom";
-import { CurrentUser, Feedback, Vote } from "src/interfaces/Feedback";
+import { CurrentUser, Idea, Vote } from "src/interfaces/Idea";
 import { ReactComponent as ChevronIcon } from "@assets/chevron-icon.svg";
 import { ReactComponent as BulbIcon } from "@assets/bulb-icon.svg";
 import Select from "react-dropdown-select";
 import Button from "@components/Button";
 import Sidebar from "@components/Sidebar";
-import EmptyFeedback from "@components/EmptyFeedback";
-import FeedbackCard from "@components/FeedbackCard";
+import EmptyIdea from "@components/EmptyIdea";
+import IdeaCard from "@components/IdeaCard";
 import Skeleton from "@components/Skeleton";
 import Card from "@components/Card";
 import styles from "./home.module.css";
@@ -22,9 +22,9 @@ import TagsCard from "@components/TagsCard";
 import RoadmapSummaryCard from "@components/RoadmapSummaryCard";
 
 // Next tasks
-// 0. Add "status" field when editing feedback. Filter suggestions in home to show only "suggestions" (4 pomodoros) [DONE in ~1 pomodoro]
+// 0. Add "status" field when editing idea. Filter suggestions in home to show only "suggestions" (4 pomodoros) [DONE in ~1 pomodoro]
 // 1. Implement filtering by tag (3 pomodoros) [Done in ~3 pomodoros]
-// 2. Show correct number of feedback by category in the sidebar (2 pomodoros) [DONE in 1 pomodoro]
+// 2. Show correct number of idea by category in the sidebar (2 pomodoros) [DONE in 1 pomodoro]
 // 3. Implement comment creation and replies too (4 pomodoros) [Done 6 pomodoros]
 // 4. Implement sorting dropdown (2 pomodoros) [Done 2 pomodoros]
 // 5. Implement sorting logic in the "API" (2 pomodoros) [Done 2 pomodoros]
@@ -45,14 +45,14 @@ import RoadmapSummaryCard from "@components/RoadmapSummaryCard";
 // b. Read and define convention on how to use size units in the project (CSS).
 // c. How to type rr6 loaders ? https://github.com/remix-run/react-router/discussions/9792
 // d. Improve how data is fetch and shared in the app (Sockets, Context API or Redux)
-// e. Maybe change everything to be called ProductRequest instead of Feedback ?
+// e. Maybe change everything to be called ProductRequest instead of Idea ?
 // f. Document the order in which imports should be done
 // g. Add "Page" suffix at the end of page components
 // h. Improve how icons are imported
 // i. Create custom hooks
 // j. Make a schema for the forms (https://www.taniarascia.com/schema-based-form-system/)
 
-type HomeDataTuple = [Feedback[], CurrentUser];
+type HomeDataTuple = [Idea[], CurrentUser];
 type HomeData = {
   data: HomeDataTuple;
 };
@@ -83,12 +83,11 @@ function HomePage() {
             <header className={styles.header}>
               <nav className={styles.nav}>
                 <div>
-                  <h1>Frontend Mentor</h1>
-                  <h2>Feedback board</h2>
+                  <h1>My ideas FYI </h1>
                 </div>
               </nav>
               {/* <TagsCard defaultTag={searchParams.get("q")?.toString()} />
-              <RoadmapSummaryCard feedbackList={[]} /> */}
+              <RoadmapSummaryCard ideaList={[]} /> */}
             </header>
             <main className={styles.main}>
               <header>
@@ -98,8 +97,8 @@ function HomePage() {
                     {sortByOptions[0].label} <ChevronIcon />{" "}
                   </b>
                 </p>
-                <Button to="/feedback/new" disabled={true}>
-                  + Add Feedback
+                <Button to="/idea/new" disabled={true}>
+                  + Add idea
                 </Button>
               </header>
               <section className={styles.mainContent}>
@@ -116,8 +115,7 @@ function HomePage() {
             <header className={styles.header}>
               <nav className={styles.nav}>
                 <div>
-                  <h1>Frontend Mentor</h1>
-                  <h2>Feedback board</h2>
+                  <h1>My ideas FYI</h1>
                 </div>
                 {/* TODO: Fix keyboard navigation which enters the sidebar when is hidden */}
                 <Sidebar open={sidebarOpen} toggle={toggleSidebar} />
@@ -125,17 +123,16 @@ function HomePage() {
               <div className={styles.headerCards}>
                 <Card className={styles.title}>
                   <div>
-                    <h1>Frontend Mentor</h1>
-                    <h2>Feedback board</h2>
+                    <h1>My ideas FYI</h1>
                   </div>
                 </Card>
                 <TagsCard defaultTag={searchParams.get("q")?.toString()} />
-                <RoadmapSummaryCard feedbackList={[]} />
+                <RoadmapSummaryCard ideaList={[]} />
               </div>
             </header>
             <main className={styles.main}>
-              <FeedbackListHeader loading={loading} />
-              <FeedbackList />
+              <IdeaListHeader loading={loading} />
+              <IdeaList />
             </main>
           </div>
         </Await>
@@ -144,9 +141,9 @@ function HomePage() {
   );
 }
 
-function FeedbackListHeader({ loading }: { loading: boolean }) {
+function IdeaListHeader({ loading }: { loading: boolean }) {
   const submit = useSubmit();
-  const [feedbackList] = useAsyncValue() as HomeDataTuple;
+  const [ideaList] = useAsyncValue() as HomeDataTuple;
   const [searchParams] = useSearchParams();
   const defaultSortingOption =
     sortByOptions.find(
@@ -158,7 +155,7 @@ function FeedbackListHeader({ loading }: { loading: boolean }) {
       <div>
         <h3 className={styles.suggestionCount}>
           {" "}
-          <BulbIcon /> {feedbackList?.length ?? 0} suggestions
+          <BulbIcon /> {ideaList?.length ?? 0} ideas
         </h3>
         <Select
           className={styles.select}
@@ -187,25 +184,25 @@ function FeedbackListHeader({ loading }: { loading: boolean }) {
           required
         />
       </div>
-      <Button to="/feedback/new">+ Add Feedback</Button>
+      <Button to="/idea/new">+ Add idea</Button>
     </header>
   );
 }
 
-function FeedbackList() {
-  const [feedbackList, currentUser] = useAsyncValue() as HomeDataTuple;
+function IdeaList() {
+  const [ideaList, currentUser] = useAsyncValue() as HomeDataTuple;
 
   return (
     <section className={styles.mainContent}>
-      {feedbackList?.length === 0 ? (
-        <EmptyFeedback />
+      {ideaList?.length === 0 ? (
+        <EmptyIdea />
       ) : (
-        feedbackList.map((feedback) => (
-          <FeedbackCard
-            key={feedback.id}
-            feedback={feedback}
-            redirectTo={`feedback/${feedback.id}`}
-            upVoted={isFeedbackUpVoted(currentUser.votes ?? [], feedback.id)}
+        ideaList.map((idea) => (
+          <IdeaCard
+            key={idea.id}
+            idea={idea}
+            redirectTo={`idea/${idea.id}`}
+            upVoted={isIdeaUpVoted(currentUser.votes ?? [], idea.id)}
           />
         ))
       )}
@@ -214,8 +211,8 @@ function FeedbackList() {
 }
 
 // TODO: Move this into a utils module maybe?
-function isFeedbackUpVoted(userVotes: Vote[], feedbackId: string): boolean {
-  return userVotes.some((vote) => vote.productRequestId === feedbackId);
+function isIdeaUpVoted(userVotes: Vote[], ideaId: string): boolean {
+  return userVotes.some((vote) => vote.productRequestId === ideaId);
 }
 
 export default HomePage;

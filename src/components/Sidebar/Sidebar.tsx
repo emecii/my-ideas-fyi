@@ -1,5 +1,5 @@
 import { useAsyncValue, useLoaderData } from "react-router-dom";
-import { Feedback } from "src/interfaces/Feedback";
+import { Idea } from "src/interfaces/Idea";
 import { ReactComponent as CloseIcon } from "@assets/close-icon.svg";
 import { ReactComponent as HamIcon } from "@assets/ham-icon.svg";
 import Drawer from "@components/Drawer";
@@ -14,7 +14,7 @@ interface SidebarProps {
 }
 
 function Sidebar({ open = false, toggle }: SidebarProps) {
-  const [feedbackList] = useAsyncValue() as [Feedback[]];
+  const [ideaList] = useAsyncValue() as [Idea[]];
   const { q } = useLoaderData() as { q: string };
 
   return (
@@ -33,7 +33,7 @@ function Sidebar({ open = false, toggle }: SidebarProps) {
       toggle={toggle}
     >
       <TagsCard className={styles.tagsCard} defaultTag={q || "All"} />
-      <RoadmapSummaryCard feedbackList={feedbackList} />
+      <RoadmapSummaryCard ideaList={ideaList} />
     </Drawer>
   );
 }

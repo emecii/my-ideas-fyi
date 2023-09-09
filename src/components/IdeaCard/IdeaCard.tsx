@@ -1,45 +1,45 @@
-import { Feedback } from "src/interfaces/Feedback";
+import { Idea } from "src/interfaces/Idea";
 import Card from "@components/Card";
 import Tag from "@components/Tag";
 import VoteButton from "@components/VoteButton";
 import CommentCount from "./CommentCount";
-import styles from "./feedbackCard.module.css";
+import styles from "./ideaCard.module.css";
 
-interface FeedbackCardProps {
-  feedback: Feedback;
+interface IdeaCardProps {
+  idea: Idea;
   redirectTo?: string;
   upVoted?: boolean;
 }
 
-function FeedbackCard({
-  feedback,
+function IdeaCard({
+  idea,
   redirectTo,
   upVoted = false,
-}: FeedbackCardProps) {
+}: IdeaCardProps) {
   const {
     id,
     title = "",
     description = "",
-    category = "Enhancement",
+    category = "All",
     upvotes = 0,
     commentCount = 0,
-  } = feedback;
+  } = idea;
 
   return (
     <Card
       to={redirectTo}
-      className={`${styles.feedbackCard} ${styles.linkWrapper}`}
+      className={`${styles.ideaCard} ${styles.linkWrapper}`}
     >
       <div>
         <aside>
-          <VoteButton feedbackId={id} upVoted={upVoted} count={upvotes} />
+          <VoteButton ideaId={id} upVoted={upVoted} count={upvotes} />
         </aside>
         <div>
           <h4>{title}</h4>
           <p>{description}</p>
-          <Tag className={styles.feedbackCardTag}>{category}</Tag>
+          <Tag className={styles.ideaCardTag}>{category}</Tag>
           <footer>
-            <VoteButton feedbackId={id} upVoted={upVoted} count={upvotes} />
+            <VoteButton ideaId={id} upVoted={upVoted} count={upvotes} />
             <CommentCount count={commentCount} />
           </footer>
         </div>
@@ -51,4 +51,4 @@ function FeedbackCard({
   );
 }
 
-export default FeedbackCard;
+export default IdeaCard;

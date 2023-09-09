@@ -1,14 +1,14 @@
-.feedbackDetails {
+.ideaDetails {
   padding: 1.5rem;
 }
 
-.feedbackDetails > header {
+.ideaDetails > header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1.5rem;
 }
 
-.feedbackDetails header a {
+.ideaDetails header a {
   font-size: 0.8125rem;
   font-weight: 700;
   color: var(--gray-dark-c);
@@ -51,10 +51,10 @@
 }
 
 @media (min-width: 768px) {
-  .feedbackDetails {
+  .ideaDetails {
     padding: 56px 40px 40px;
   }
-  .feedbackDetails header a {
+  .ideaDetails header a {
     font-size: 0.875rem;
   }
   .comments {

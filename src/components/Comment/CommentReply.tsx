@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CommentReply } from "src/interfaces/Feedback";
+import { CommentReply } from "src/interfaces/Idea";
 import AvatarTestImage from "@assets/avatar-test.png";
 import CommentHeader from "./CommentHeader";
 import AddComment from "@components/AddComment";
@@ -8,14 +8,14 @@ import styles from "./comment.module.css";
 interface CommentReplyProps {
   className?: string;
   reply: CommentReply;
-  feedbackId: string;
+  ideaId: string;
   commentId: string;
 }
 
 function CommentReply({
   className = "",
   reply,
-  feedbackId,
+  ideaId,
   commentId,
 }: CommentReplyProps) {
   const { user, content, replyingTo } = reply;
@@ -37,7 +37,7 @@ function CommentReply({
         style={{ display: replyFormVisible ? "block" : "none" }}
       >
         <AddComment
-          feedbackId={feedbackId}
+          ideaId={ideaId}
           commentId={commentId}
           onCommentSubmitted={() => setReplyFormVisible(false)}
         />

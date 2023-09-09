@@ -1,17 +1,17 @@
 import { Await, Link, useLoaderData, useNavigate } from "react-router-dom";
 import { ReactComponent as ChevronLeftIcon } from "@assets/chevron-left-icon.svg";
 import { ReactComponent as PlusIcon } from "@assets/plus-icon.svg";
-import { Feedback } from "src/interfaces/Feedback";
+import { Idea } from "src/interfaces/Idea";
 import Card from "@components/Card";
-import FeedbackForm from "@components/FeedbackForm";
-import styles from "./feedbackEdit.module.css";
+import IdeaForm from "@components/IdeaForm";
+import styles from "./ideaEdit.module.css";
 import { Suspense } from "react";
 import Skeleton from "@components/Skeleton";
 
-function FeedbackEditPage() {
+function IdeaEditPage() {
   const navigate = useNavigate();
-  const { feedbackPromise } = useLoaderData() as {
-    feedbackPromise: Promise<Feedback>;
+  const { ideaPromise } = useLoaderData() as {
+    ideaPromise: Promise<Idea>;
   };
 
   return (
@@ -36,13 +36,13 @@ function FeedbackEditPage() {
             }
           >
             <Await
-              resolve={feedbackPromise}
+              resolve={ideaPromise}
               errorElement={<p>Error loading home data</p>}
             >
-              {(feedback) => (
+              {(idea) => (
                 <>
-                  <h3>Editing {feedback.title}</h3>
-                  <FeedbackForm defaultFeedback={feedback} editing={true} />
+                  <h3>Editing {idea.title}</h3>
+                  <IdeaForm defaultIdea={idea} editing={true} />
                 </>
               )}
             </Await>
@@ -53,4 +53,4 @@ function FeedbackEditPage() {
   );
 }
 
-export default FeedbackEditPage;
+export default IdeaEditPage;

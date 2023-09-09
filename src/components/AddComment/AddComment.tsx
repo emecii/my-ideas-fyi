@@ -4,7 +4,7 @@ import Button from "@components/Button";
 import styles from "./addComment.module.css";
 
 interface AddCommentProps {
-  feedbackId: string;
+  ideaId: string;
   commentId?: string;
   onCommentSubmitted?: () => void;
 }
@@ -12,7 +12,7 @@ interface AddCommentProps {
 const MAX_CHARS = 250;
 
 function AddComment({
-  feedbackId,
+  ideaId,
   commentId,
   onCommentSubmitted = () => {},
 }: AddCommentProps) {
@@ -56,7 +56,7 @@ function AddComment({
               fetcher.submit(
                 {
                   comment: comment.toString(),
-                  feedbackId: feedbackId.toString(),
+                  ideaId: ideaId.toString(),
                   commentId,
                   intent: "replyComment",
                 },
@@ -66,7 +66,7 @@ function AddComment({
               fetcher.submit(
                 {
                   comment: comment.toString(),
-                  feedbackId: feedbackId.toString(),
+                  ideaId: ideaId.toString(),
                   intent: "addComment",
                 },
                 { method: "put" }
