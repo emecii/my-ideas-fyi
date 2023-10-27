@@ -24,6 +24,6 @@
       "@api/*": ["src/api/*"]
     }
   },
-  "include": ["src", "vite.config.ts", "svg.d.ts"],
+  "include": ["src", "express-plugin.ts", "vite.config.ts", "svg.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
