@@ -5,7 +5,7 @@ import {
   IdeaDetails,
   IdeaStatus,
   ProductRequest,
-} from "src/interfaces/Idea";
+} from "../interfaces/Idea";
 
 import { IdeaModel, UserModel } from "../models/IdeaModel";
 import { Document } from "mongoose";

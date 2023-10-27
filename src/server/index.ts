@@ -8,15 +8,18 @@ import {
   updateCurrentUser,
   deleteIdea,
 } from "../api/IdeaAPI";
-import { IdeaStatus } from "src/interfaces/Idea";
+import { IdeaStatus } from "../interfaces/Idea";
 import { UserModel } from "../models/IdeaModel";
 import { clerkClient } from "@clerk/clerk-sdk-node";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const app = express();
 app.use(express.json()); // To parse JSON bodies
 
 // Mongoose Connection
-const connectionString = import.meta.env.VITE_MONGODB_CONNECTION_STRING;
+const connectionString = process.env.MONGODB_CONNECTION_STRING || "";
 
 mongoose.connect(connectionString, {});
 
@@ -191,14 +194,12 @@ app.post("/api/updateVotes", async (req, res) => {
 });
 
 // Serve Frontend Files
-if (!process.env["VITE"]) {
-  const frontendFiles = process.cwd() + "/dist";
-  app.use(express.static(frontendFiles));
-  app.get("/*", (_, res) => {
-    res.sendFile(frontendFiles + "/index.html");
-  });
-  app.listen(process.env["PORT"]);
-}
-function then(arg0: () => void) {
-  throw new Error("Function not implemented.");
-}
+const frontendFiles = process.cwd() + "/dist";
+app.use(express.static(frontendFiles));
+app.use("/api", express.static(process.cwd() + "/api"));
+app.use("/interfaces", express.static(process.cwd() + "/interfaces"));
+app.use("/models", express.static(process.cwd() + "/models"));
+app.get("/*", (_, res) => {
+  res.sendFile(frontendFiles + "/index.html");
+});
+app.listen(3000, () => console.log("Server running on port 3000"));
