@@ -20,9 +20,14 @@ function useIdeaData(ideaId: string) {
         setIdea(ideaDetails);
         console.log("Refresh idea success");
       } catch (err) {
-        console.error(err);
-        setError(err);
-      }
+        if (err instanceof Error) {
+            setError(err);
+            console.error(err.message);
+        } else {
+            setError(new Error("An unknown error occurred"));
+            console.error("An unknown error occurred");
+        }
+    }
     };
 
     useEffect(() => {

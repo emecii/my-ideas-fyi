@@ -8,6 +8,8 @@ import { IdeaDetails } from "src/interfaces/Idea";
 interface VoteButtonProps {
   className?: string;
   ideaId: string;
+  upVoted?: boolean;
+  count?: number;
 }
 
 function VoteButton({ className = "", ideaId }: VoteButtonProps) {
