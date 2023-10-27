@@ -2,15 +2,13 @@ import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   defer,
+  Link,
 } from "react-router-dom";
 import { Idea, IdeaStatus } from "src/interfaces/Idea";
-import {
-  getIdeaList,
-  getCurrentUser,
-  updateIdeaById,
-  updateCurrentUser,
-} from "@api/IdeaAPI";
+import { getIdeaList, updateIdeaById, updateCurrentUser } from "@api/IdeaAPI";
 import HomePage from "../pages/Home";
+import { useAuth } from "@clerk/clerk-react";
+import SignInPage from "../pages/SignIn/SignInPage";
 
 type HomeURLSearchParams = {
   q: string;
@@ -23,11 +21,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     url.searchParams
   ) as HomeURLSearchParams;
   const status: IdeaStatus = "suggestion";
+
   const ideaListPromise = getIdeaList(q, sortBy, status);
-  const currentUserPromise = getCurrentUser();
 
   return defer({
-    data: Promise.all([ideaListPromise, currentUserPromise]),
+    data: Promise.all([ideaListPromise]),
     q,
   });
 }
@@ -38,23 +36,32 @@ export async function action({ request }: ActionFunctionArgs) {
   if (!ideaId) {
     throw new Error("Idea id missing");
   }
+  const userId = formData.get("userId")?.toString();
+  if (!userId) {
+    throw new Error("User id missing");
+  }
   const upVoted = formData.get("upVoted") === "true";
-  const currentUser = await getCurrentUser();
-  const updatedCurrentUser = {
-    ...currentUser,
-    votes: upVoted
-      ? currentUser.votes?.concat({ productRequestId: ideaId, voted: "up" })
-      : currentUser.votes?.filter(
-          (vote) => vote.productRequestId !== ideaId
-        ),
-  };
-  await updateCurrentUser(updatedCurrentUser);
-
-  return updateIdeaById(ideaId, {
-    upvotes: Number(formData.get("upvotes")),
-  } as Idea);
+  const res = await fetch("/api/updateVotes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      voteId: ideaId,
+      userId: userId,
+      upVoted: upVoted,
+    }),
+  });
+  if (res.ok) {
+    return updateIdeaById(ideaId, {
+      upvotes: Number(formData.get("upvotes")),
+    } as Idea);
+  }
 }
 
 export default function RootRoute() {
+  const { isSignedIn } = useAuth();
+  // console.log("Is signed in? ", isSignedIn);
+  if (!isSignedIn) {
+    return <SignInPage />;
+  }
   return <HomePage />;
 }

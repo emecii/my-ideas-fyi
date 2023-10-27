@@ -20,6 +20,7 @@ function AddComment({
   const [charsLeft, setCharsLeft] = useState(MAX_CHARS);
   const fetcher = useFetcher();
   const submitting = fetcher.state === "submitting";
+  console.log("Fetcher.state: ", fetcher.state);
 
   useEffect(() => {
     if (fetcher.state === "loading") {

@@ -1,16 +1,6 @@
-import { Suspense } from "react";
-import {
-  Await,
-  Link,
-  useAsyncValue,
-  useLoaderData,
-  useNavigate,
-} from "react-router-dom";
-import {
-  CurrentUser,
-  IdeaDetails as IIdeaDetails,
-  Vote,
-} from "src/interfaces/Idea";
+import { Suspense, useEffect } from "react";
+import { Await, Link, useNavigate } from "react-router-dom";
+import { Idea, IdeaDetails, Vote } from "src/interfaces/Idea";
 import { ReactComponent as ChevronLeftIcon } from "@assets/chevron-left-icon.svg";
 import IdeaCard from "@components/IdeaCard";
 import Button from "@components/Button";
@@ -19,15 +9,16 @@ import Comment from "@components/Comment";
 import AddComment from "@components/AddComment";
 import Skeleton from "@components/Skeleton";
 import styles from "./ideaDetails.module.css";
+import useIdeaData from "./useIdeaData";
 
-type IdeaDetailsDataTuple = [IIdeaDetails, CurrentUser];
-type IdeaDetailsData = {
-  data: IdeaDetailsDataTuple;
-};
+function transformToIdea(ideaDetails: IdeaDetails): Idea {
+  const { id, title, category, upvotes, status, description, commentCount } =
+    ideaDetails;
+  return { id, title, category, upvotes, status, description, commentCount };
+}
 
-function IdeaDetailsPage() {
+function IdeaDetailsPage({ ideaId }: { ideaId: string }) {
   const navigate = useNavigate();
-  const { data } = useLoaderData() as IdeaDetailsData;
 
   return (
     <main className={styles.ideaDetails}>
@@ -49,23 +40,24 @@ function IdeaDetailsPage() {
           </div>
         }
       >
-        <Await resolve={data} errorElement={<p>Error loading home data</p>}>
-          <IdeaDetails />
-        </Await>
+        <IdeaDetails ideaId={ideaId} />
       </Suspense>
     </main>
   );
 }
 
-function IdeaDetails() {
-  const [idea, currentUser] = useAsyncValue() as IdeaDetailsDataTuple;
-  const userVotes = currentUser.votes ?? [];
+function IdeaDetails({ ideaId }: { ideaId: string; commentCount?: number }) {
+  const userVotes: Vote[] = [];
+  const { idea } = useIdeaData(ideaId);
+  if (!idea) {
+    return null;
+  }
 
   return (
     <div className={styles.content}>
       <IdeaCard
-        idea={idea}
-        upVoted={isIdeaUpVoted(userVotes, idea.id)}
+        idea={transformToIdea(idea)}
+        upVoted={isIdeaUpVoted(userVotes, ideaId)}
       />
 
       {idea?.comments && idea.comments.length > 0 ? (
@@ -86,7 +78,7 @@ function IdeaDetails() {
 
       <Card className={`${styles.addComment}`}>
         <h3>Add Comment</h3>
-        <AddComment ideaId={idea.id} />
+        <AddComment ideaId={ideaId} />
       </Card>
     </div>
   );

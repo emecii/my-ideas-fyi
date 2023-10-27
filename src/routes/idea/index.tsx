@@ -1,37 +1,52 @@
-import { Params, ActionFunctionArgs, defer } from "react-router-dom";
-import {
-  Idea,
-  IdeaDetails,
-  Comment,
-  CommentReply,
-} from "src/interfaces/Idea";
-import {
-  getCurrentUser,
-  getIdeaById,
-  updateCurrentUser,
-  updateIdeaById,
-} from "@api/IdeaAPI";
+import { Params, ActionFunctionArgs, useParams, defer } from "react-router-dom";
+import { Idea, IdeaDetails, Comment, CommentReply } from "src/interfaces/Idea";
+import { updateCurrentUser, updateIdeaById } from "@api/IdeaAPI";
 import IdeaDetailsPage from "../../pages/IdeaDetails";
+import { useAuth } from "@clerk/clerk-react";
+import RootRoute from "..";
 
 interface LoaderFunctionArgs {
   params: Params;
 }
 
-export async function loader({ params }: LoaderFunctionArgs) {
-  const idea = getIdeaById(params.ideaId);
-  const currentUser = getCurrentUser();
+async function getIdeaById(ideaId: string): Promise<IdeaDetails> {
+  const res = await fetch(`/api/idea/${ideaId}`, {
+    method: "GET",
+    headers: {
+      "content-type": "application/json;charset=UTF-8",
+    },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch idea with id ${ideaId}`);
+  }
+  const ideaDetails = await res.json();
+  return ideaDetails;
+}
 
-  return defer({ data: Promise.all([idea, currentUser]) });
+export async function loader({ params }: LoaderFunctionArgs) {
+  if (!params.ideaId) {
+    throw new Error("Idea id missing");
+  }
+  if (!params.userId) {
+    throw new Error("User id missing");
+  }
+
+  const idea = getIdeaById(params.ideaId);
+
+  return defer({ data: Promise.all([idea]) });
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
   if (!params.ideaId) {
     throw new Error("Idea id missing");
   }
+  if (!params.userId) {
+    throw new Error("User id missing");
+  }
+
   const ideaId = params.ideaId;
   const formData = await request.formData();
   const intent = formData.get("intent");
-  const currentUser = await getCurrentUser();
 
   if (intent === "addComment") {
     const idea = await getIdeaById(params.ideaId);
@@ -40,34 +55,42 @@ export async function action({ request, params }: ActionFunctionArgs) {
       id: crypto.randomUUID(),
       content: commentText,
       user: {
-        image: currentUser.image,
-        name: currentUser.name,
-        username: currentUser.username,
+        image: "",
+        name: params.userId,
+        username: params.userId,
       },
     };
-    return updateIdeaById(params.ideaId, {
-      comments:
+    const res = await fetch(`/api/idea/${params.ideaId}`, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        comments:
         Array.isArray(idea.comments) && idea.comments.length > 0
           ? idea.comments?.concat(comment)
           : [comment],
-    } as IdeaDetails);
+      }),
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to add comment to idea with id ${ideaId}`);
+    }
+    return res.json();
   } else if (intent === "replyComment") {
     const idea = await getIdeaById(params.ideaId);
     if (idea.comments === undefined) {
-      throw new Error(
-        `Idea with id ${idea.id} has no comments to reply to`
-      );
+      throw new Error(`Idea with id ${idea.id} has no comments to reply to`);
     }
     const content = formData.get("comment")?.toString() ?? "";
     const commentId = formData.get("commentId")?.toString() ?? "";
     const reply: CommentReply = {
       id: crypto.randomUUID(),
       content,
-      replyingTo: currentUser.username,
+      replyingTo: params.userId,
       user: {
-        image: currentUser.image,
-        name: currentUser.name,
-        username: currentUser.username,
+        image: "",
+        name: params.userId,
+        username: params.userId,
       },
     };
     const commentUpdated = idea.comments?.find(
@@ -93,27 +116,32 @@ export async function action({ request, params }: ActionFunctionArgs) {
     } as IdeaDetails);
   } else if (intent === "upVote") {
     const upVoted = formData.get("upVoted") === "true";
-    const updatedCurrentUser = {
-      ...currentUser,
-      votes: upVoted
-        ? currentUser.votes?.concat({
-            productRequestId: ideaId,
-            voted: "up",
-          })
-        : currentUser.votes?.filter(
-            (vote) => vote.productRequestId !== ideaId
-          ),
-    };
-
-    await updateCurrentUser(updatedCurrentUser);
-    return updateIdeaById(params.ideaId, {
-      upvotes: Number(formData.get("upvotes")),
-    } as Idea);
+    const res = await fetch("/api/updateVotes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        voteId: ideaId,
+        userId: params.userId,
+        upVoted: upVoted,
+      }),
+    });
+    if (res.ok) {
+      return updateIdeaById(params.ideaId, {
+        upvotes: Number(formData.get("upvotes")),
+      } as Idea);
+    }
   }
 
   return null;
 }
 
 export default function IdeaDetailsRoute() {
-  return <IdeaDetailsPage />;
+  const params = useParams();
+  const ideaId = params.ideaId || "";
+  const { isSignedIn } = useAuth();
+  if (!isSignedIn) {
+    return <RootRoute />;
+  } else {
+    return <IdeaDetailsPage ideaId={ideaId} />;
+  }
 }

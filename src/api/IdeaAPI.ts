@@ -7,154 +7,103 @@ import {
   ProductRequest,
 } from "src/interfaces/Idea";
 
+import { IdeaModel, UserModel } from "../models/IdeaModel";
+import { Document } from "mongoose";
+
 async function getIdeaList(
   query?: string,
   sortBy?: string,
   status?: IdeaStatus
 ): Promise<Idea[]> {
-  const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
-  const productRequests: ProductRequest[] = data.productRequests.filter(
-    (pr) => {
-      let validPR = true;
-      if (status) {
-        validPR = pr.status.toLowerCase() === status.toLowerCase();
-      }
-      if (query && query !== "All" && validPR) {
-        validPR = pr.category.toLowerCase() === query.toLowerCase();
-      }
-      return validPR;
-    }
-  );
-  const sortedProductRequests = sortBy
-    ? productRequests.sort((prA, prB) => {
+  let filter: any = {};
+
+  if (status) {
+    filter.status = status;
+  }
+  if (query && query !== "All") {
+    filter.category = query;
+  }
+
+  const ideas = await IdeaModel.find(filter).exec();
+
+  const sortedIdeas = sortBy
+    ? ideas.sort((a: Document, b: Document) => {
+        const prA = a.toObject() as ProductRequest;
+        const prB = b.toObject() as ProductRequest;
         return sortByVotesOrComments(sortBy, prA, prB);
       })
-    : productRequests;
+    : ideas;
 
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(adaptProductRequestsToIdeaList(sortedProductRequests));
+      resolve(adaptProductRequestsToIdeaList(sortedIdeas as any));
     }, 1000);
   });
 }
 
-async function getCurrentUser(): Promise<CurrentUser> {
-  const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
-  const currentUser = data.currentUser;
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(currentUser);
-    }, 1000);
-  });
+async function getIdeaById(id: string): Promise<IdeaDetails> {
+  const filter = { id: id };
+  const idea = await IdeaModel.findOne(filter).exec();
+  return adaptProductRequestToIdeaDetails(idea as any);
 }
 
-async function getIdeaById(
-  id: string | undefined
-): Promise<IdeaDetails> {
-  if (id === undefined) {
-    throw new Error("There was no id provided to get the idea item.");
-  }
-  const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
-  const productRequests: ProductRequest[] = data.productRequests;
-  const productRequestItem = productRequests.find((pr) => pr.id === id) ?? null;
-  if (productRequestItem === null) {
+async function updateIdeaById(id: string, ideaUpdated: Idea): Promise<Idea> {
+  const filter = { id: id };
+  const productRequestDoc = await IdeaModel.findOneAndUpdate(
+    filter,
+    ideaUpdated,
+    {
+      new: true,
+    }
+  ).exec();
+  if (!productRequestDoc) {
     throw new Error(`Idea item with id ${id} was not found`);
   }
-  // TODO: Implement rejection too
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(adaptProductRequestToIdeaDetails(productRequestItem));
-    }, 1000);
-  });
-}
-
-async function updateIdeaById(
-  id: string | undefined,
-  ideaUpdated: Idea
-): Promise<Idea> {
-  if (id === undefined) {
-    throw new Error("There was no id provided to get the idea item.");
-  }
-  const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
-  const productRequests: ProductRequest[] = data.productRequests;
-  const productRequestItem = productRequests.find((pr) => pr.id === id) ?? null;
-  if (productRequestItem === null) {
-    throw new Error(`Idea item with id ${id} was not found`);
-  }
-  Object.assign(productRequestItem, ideaUpdated);
-  localStorage.setItem("data", JSON.stringify({ ...data, productRequests }));
-  // TODO: Implement rejection too
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(productRequestItem as IdeaDetails);
-    }, 1000);
-  });
+  const productRequestItem = productRequestDoc.toObject() as Idea;
+  return productRequestItem;
 }
 
 async function updateCurrentUser(
+  userId: string,
   currentUserUpdated: CurrentUser
 ): Promise<CurrentUser> {
-  const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
-  const currentUser = data.currentUser;
+  // Find the user by ID and update
+  const updatedUserDoc = await UserModel.findByIdAndUpdate(
+    userId,
+    currentUserUpdated,
+    { new: true }
+  ).exec();
 
-  Object.assign(currentUser, currentUserUpdated);
-  localStorage.setItem("data", JSON.stringify({ ...data, currentUser }));
-  // TODO: Implement rejection too
-  // return new Promise((resolve, reject) => {
-  //   setTimeout(() => {
-  //     resolve(productRequestItem as IdeaDetails);
-  //   }, 1000);
-  // });
-  return currentUser;
-}
-
-async function addNewIdea(idea: Idea): Promise<ProductRequest> {
-  const dataStr: string = localStorage.getItem("data") ?? "";
-  const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
-  const productRequests: ProductRequest[] = data.productRequests;
-  const productRequest = {
-    ...idea,
-    comments: [],
-  } as ProductRequest;
-
-  localStorage.setItem(
-    "data",
-    JSON.stringify({
-      ...data,
-      productRequests: [productRequest, ...productRequests],
-    })
-  );
-  // TODO: Implement rejection too
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(idea);
-    }, 1000);
-  });
-}
-
-async function deleteIdea(id: string | undefined) {
-  if (id === undefined) {
-    throw new Error("There was no id provided to get the idea item.");
+  // Check if the user was successfully updated
+  if (!updatedUserDoc) {
+    throw new Error("Failed to update user");
   }
+
+  // Convert the Mongoose document to a plain JavaScript object and cast it to CurrentUser
+  const updatedUser = updatedUserDoc.toObject() as CurrentUser;
+
+  // Optionally, you can update the local storage as well
   const dataStr: string = localStorage.getItem("data") ?? "";
   const data: IdeaAPIResponse = JSON.parse(dataStr ?? "");
-  const productRequests: ProductRequest[] = data.productRequests.filter(
-    (pr) => pr.id !== id
-  );
+  data.currentUser = updatedUser;
+  localStorage.setItem("data", JSON.stringify(data));
 
-  localStorage.setItem("data", JSON.stringify({ ...data, productRequests }));
-  // TODO: Implement rejection too
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`Idea item with id: ${id} was successfully deleted.`);
-    }, 1000);
-  });
+  return updatedUser;
+}
+
+async function addNewIdea(idea: Idea): Promise<Idea> {
+  const newIdeaDoc = new IdeaModel(idea);
+  await newIdeaDoc.save();
+  const newIdea = newIdeaDoc.toObject() as Idea;
+  return newIdea;
+}
+
+async function deleteIdea(id: string): Promise<string> {
+  const deletedIdea = await IdeaModel.findByIdAndDelete(id);
+  if (!deletedIdea) {
+    throw new Error(`Idea item with id ${id} was not found`);
+  }
+  return `Idea item with id: ${id} was successfully deleted.`;
 }
 
 // Helpers
@@ -201,9 +150,7 @@ function adaptProductRequestToIdeaDetails(
   };
 }
 
-function adaptProductRequestToIdea(
-  productRequest: ProductRequest
-): Idea {
+function adaptProductRequestToIdea(productRequest: ProductRequest): Idea {
   return {
     id: productRequest.id,
     title: productRequest.title,
@@ -225,7 +172,6 @@ function adaptProductRequestsToIdeaList(
 }
 export {
   getIdeaList,
-  getCurrentUser,
   getIdeaById,
   addNewIdea,
   updateIdeaById,

@@ -1,4 +1,4 @@
-import { Await, Link, useLoaderData, useNavigate } from "react-router-dom";
+import { Await, Link, useNavigate } from "react-router-dom";
 import { ReactComponent as ChevronLeftIcon } from "@assets/chevron-left-icon.svg";
 import { ReactComponent as PlusIcon } from "@assets/plus-icon.svg";
 import { Idea } from "src/interfaces/Idea";
@@ -7,12 +7,11 @@ import IdeaForm from "@components/IdeaForm";
 import styles from "./ideaEdit.module.css";
 import { Suspense } from "react";
 import Skeleton from "@components/Skeleton";
+import useIdeaData from "../IdeaDetails/useIdeaData";
 
-function IdeaEditPage() {
+function IdeaEditPage({ ideaId }: { ideaId: string }) {
   const navigate = useNavigate();
-  const { ideaPromise } = useLoaderData() as {
-    ideaPromise: Promise<Idea>;
-  };
+  const { idea } = useIdeaData(ideaId);
 
   return (
     <div className={styles.container}>
@@ -35,17 +34,14 @@ function IdeaEditPage() {
               </div>
             }
           >
-            <Await
-              resolve={ideaPromise}
-              errorElement={<p>Error loading home data</p>}
-            >
-              {(idea) => (
-                <>
-                  <h3>Editing {idea.title}</h3>
-                  <IdeaForm defaultIdea={idea} editing={true} />
-                </>
-              )}
-            </Await>
+            {idea ? (
+              <>
+                <h3>Editing {idea.title}</h3>
+                <IdeaForm defaultIdea={idea} editing={true} />
+              </>
+            ) : (
+              <p>Error loading home data</p>
+            )}
           </Suspense>
         </Card>
       </main>

@@ -1,5 +1,3 @@
-import { useAsyncValue, useLoaderData } from "react-router-dom";
-import { Idea } from "src/interfaces/Idea";
 import { ReactComponent as CloseIcon } from "@assets/close-icon.svg";
 import { ReactComponent as HamIcon } from "@assets/ham-icon.svg";
 import Drawer from "@components/Drawer";
@@ -7,6 +5,7 @@ import Button from "@components/Button";
 import RoadmapSummaryCard from "@components/RoadmapSummaryCard";
 import TagsCard from "@components/TagsCard";
 import styles from "./sidebar.module.css";
+import { Idea } from "src/interfaces/Idea";
 
 interface SidebarProps {
   open: boolean;
@@ -14,8 +13,7 @@ interface SidebarProps {
 }
 
 function Sidebar({ open = false, toggle }: SidebarProps) {
-  const [ideaList] = useAsyncValue() as [Idea[]];
-  const { q } = useLoaderData() as { q: string };
+  const ideas: Idea[] = [];
 
   return (
     <Drawer
@@ -32,8 +30,8 @@ function Sidebar({ open = false, toggle }: SidebarProps) {
       }
       toggle={toggle}
     >
-      <TagsCard className={styles.tagsCard} defaultTag={q || "All"} />
-      <RoadmapSummaryCard ideaList={ideaList} />
+      <TagsCard className={styles.tagsCard} defaultTag={"All"} />
+      <RoadmapSummaryCard ideaList={ideas} />
     </Drawer>
   );
 }

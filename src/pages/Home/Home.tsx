@@ -1,12 +1,5 @@
 import { Suspense, useState } from "react";
-import {
-  Await,
-  useAsyncValue,
-  useLoaderData,
-  useNavigation,
-  useSearchParams,
-  useSubmit,
-} from "react-router-dom";
+import { Await, redirect, useSearchParams, useSubmit } from "react-router-dom";
 import { CurrentUser, Idea, Vote } from "src/interfaces/Idea";
 import { ReactComponent as ChevronIcon } from "@assets/chevron-icon.svg";
 import { ReactComponent as BulbIcon } from "@assets/bulb-icon.svg";
@@ -20,6 +13,8 @@ import Card from "@components/Card";
 import styles from "./home.module.css";
 import TagsCard from "@components/TagsCard";
 import RoadmapSummaryCard from "@components/RoadmapSummaryCard";
+import useHomeData from "./useHomeData";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 // Next tasks
 // 0. Add "status" field when editing idea. Filter suggestions in home to show only "suggestions" (4 pomodoros) [DONE in ~1 pomodoro]
@@ -52,11 +47,6 @@ import RoadmapSummaryCard from "@components/RoadmapSummaryCard";
 // i. Create custom hooks
 // j. Make a schema for the forms (https://www.taniarascia.com/schema-based-form-system/)
 
-type HomeDataTuple = [Idea[], CurrentUser];
-type HomeData = {
-  data: HomeDataTuple;
-};
-
 const sortByOptions = [
   { label: "Most Upvotes", value: "moreVotes" },
   { label: "Least Upvotes", value: "lessVotes" },
@@ -65,11 +55,9 @@ const sortByOptions = [
 ];
 
 function HomePage() {
-  const navigation = useNavigation();
   const [searchParams] = useSearchParams();
-  const { data } = useLoaderData() as HomeData;
+  const { ideas, loading } = useHomeData();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const loading = navigation.state === "loading";
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -110,7 +98,7 @@ function HomePage() {
           </div>
         }
       >
-        <Await resolve={data} errorElement={<p>Error loading home data</p>}>
+        <Await resolve={ideas} errorElement={<p>Error loading home data</p>}>
           <div className={loading ? styles.loading : undefined}>
             <header className={styles.header}>
               <nav className={styles.nav}>
@@ -142,8 +130,12 @@ function HomePage() {
 }
 
 function IdeaListHeader({ loading }: { loading: boolean }) {
+  const { userId } = useAuth();
+  if (!userId) {
+    return null;
+  }
   const submit = useSubmit();
-  const [ideaList] = useAsyncValue() as HomeDataTuple;
+  const { ideas } = useHomeData();
   const [searchParams] = useSearchParams();
   const defaultSortingOption =
     sortByOptions.find(
@@ -155,7 +147,7 @@ function IdeaListHeader({ loading }: { loading: boolean }) {
       <div>
         <h3 className={styles.suggestionCount}>
           {" "}
-          <BulbIcon /> {ideaList?.length ?? 0} ideas
+          <BulbIcon /> {ideas?.length ?? 0} ideas
         </h3>
         <Select
           className={styles.select}
@@ -184,25 +176,33 @@ function IdeaListHeader({ loading }: { loading: boolean }) {
           required
         />
       </div>
-      <Button to="/idea/new">+ Add idea</Button>
+      <Button to={`/idea/new/${userId}`}>+ Add idea</Button>
     </header>
   );
 }
 
 function IdeaList() {
-  const [ideaList, currentUser] = useAsyncValue() as HomeDataTuple;
+  const { ideas } = useHomeData();
+  const { userId } = useAuth();
+  const { user } = useUser();
+  if (!userId) {
+    return null;
+  }
 
   return (
     <section className={styles.mainContent}>
-      {ideaList?.length === 0 ? (
+      {ideas?.length === 0 ? (
         <EmptyIdea />
       ) : (
-        ideaList.map((idea) => (
+        ideas.map((idea) => (
           <IdeaCard
             key={idea.id}
             idea={idea}
-            redirectTo={`idea/${idea.id}`}
-            upVoted={isIdeaUpVoted(currentUser.votes ?? [], idea.id)}
+            redirectTo={`idea/${idea.id}/${userId}`}
+            upVoted={isIdeaUpVoted(
+              (user?.publicMetadata.votes as string[]) || [],
+              idea.id
+            )}
           />
         ))
       )}
@@ -211,8 +211,11 @@ function IdeaList() {
 }
 
 // TODO: Move this into a utils module maybe?
-function isIdeaUpVoted(userVotes: Vote[], ideaId: string): boolean {
-  return userVotes.some((vote) => vote.productRequestId === ideaId);
+function isIdeaUpVoted(userVotes: any, ideaId: string): boolean {
+  if (Array.isArray(userVotes)) {
+    return userVotes.includes(ideaId);
+  }
+  return false;
 }
 
 export default HomePage;
