@@ -43,3 +43,36 @@
   align-items: center;
   justify-content: center;
 }
+.modalContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  z-index: 1000; /* Ensures modal is on top */
+}
+
+.modalContent {
+  background-color: #ffffff;
+  padding: 20px;
+  max-width: 500px; /* Or any size you want */
+  width: 90%; /* Ensures it fits smaller screens */
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center; /* Optional: Centers the content */
+}
+
+button {
+  margin-top: 15px; /* Adds some spacing above the button */
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff; /* For example, blue */
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}

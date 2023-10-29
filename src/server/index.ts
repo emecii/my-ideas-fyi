@@ -133,7 +133,7 @@ app.put("/api/user/:userId", async (req, res) => {
 app.delete("/api/idea/:id", async (req, res) => {
   try {
     const message = await deleteIdea(req.params.id);
-    res.send(message);
+    res.status(200).send(message);
   } catch (error) {
     if (error instanceof Error) {
       // If error is an instance of Error, send the error message

@@ -17,7 +17,7 @@ function transformToIdea(ideaDetails: IdeaDetails): Idea {
   return { id, title, category, upvotes, status, description, commentCount };
 }
 
-function IdeaDetailsPage({ ideaId }: { ideaId: string }) {
+function IdeaDetailsPage({ ideaId, idea }: { ideaId: string, idea: IdeaDetails }) {
   const navigate = useNavigate();
 
   return (
@@ -40,15 +40,14 @@ function IdeaDetailsPage({ ideaId }: { ideaId: string }) {
           </div>
         }
       >
-        <IdeaDetails ideaId={ideaId} />
+        <IdeaDetails ideaId={ideaId} idea={idea} />
       </Suspense>
     </main>
   );
 }
 
-function IdeaDetails({ ideaId }: { ideaId: string; commentCount?: number }) {
+function IdeaDetails({ ideaId, idea }: { ideaId: string, idea: IdeaDetails, commentCount?: number }) {
   const userVotes: Vote[] = [];
-  const { idea } = useIdeaData(ideaId);
   if (!idea) {
     return null;
   }

@@ -22,12 +22,31 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ) as HomeURLSearchParams;
   const status: IdeaStatus = "suggestion";
 
-  const ideaListPromise = getIdeaList(q, sortBy, status);
+  // Construct the API URL with query parameters
+  const apiUrl = new URL("/api/ideas/", window.location.origin);
+  if (q) apiUrl.searchParams.append("query", q);
+  if (sortBy) apiUrl.searchParams.append("sortBy", sortBy);
+  if (status) apiUrl.searchParams.append("status", status);
 
-  return defer({
-    data: Promise.all([ideaListPromise]),
-    q,
+  // Call the fetch function
+  const res = await fetch(apiUrl.toString(), {
+    method: "GET",
   });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ideas`);
+  }
+
+  console.log("res is " + res);
+
+  const ideaList = await res.json();
+
+  console.log("idea list is " + ideaList);
+
+  return {
+    ideas: ideaList as Idea[],
+    q,
+  }
 }
 
 export async function action({ request }: ActionFunctionArgs) {

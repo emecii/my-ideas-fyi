@@ -22,13 +22,13 @@ function AddComment({
   const submitting = fetcher.state === "submitting";
   console.log("Fetcher.state: ", fetcher.state);
 
-  useEffect(() => {
-    if (fetcher.state === "loading") {
-      setComment("");
-      setCharsLeft(MAX_CHARS);
-      onCommentSubmitted();
-    }
-  }, [fetcher.state]);
+  // useEffect(() => {
+  //   if (fetcher.state === "loading") {
+  //     setComment("");
+  //     setCharsLeft(MAX_CHARS);
+  //     onCommentSubmitted();
+  //   }
+  // }, [fetcher.state]);
 
   function handleTextAreaChange(event: ChangeEvent<HTMLTextAreaElement>) {
     const textLength = event.target.value.length;

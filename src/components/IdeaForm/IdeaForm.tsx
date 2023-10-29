@@ -26,7 +26,13 @@ interface IdeaFormProps {
   editing?: boolean;
 }
 
-function IdeaForm({ defaultIdea, editing = false }: IdeaFormProps) {
+interface IdeaFormProps {
+  defaultIdea?: Idea;
+  editing?: boolean;
+  onDelete?: () => void;
+}
+
+function IdeaForm({ defaultIdea, editing = false, onDelete }: IdeaFormProps) {
   const navigate = useNavigate();
   const submittingForm = useNavigation().state === "submitting";
   const defaultCategory = defaultIdea?.category ?? "All";
@@ -41,6 +47,12 @@ function IdeaForm({ defaultIdea, editing = false }: IdeaFormProps) {
 
   function handleSubmitForm() {
     setFormSubmitted(true);
+  }
+
+  async function handleDeleteClick() {
+    if (onDelete) {
+      onDelete();
+    }
   }
 
   return (
@@ -163,9 +175,7 @@ function IdeaForm({ defaultIdea, editing = false }: IdeaFormProps) {
       {editing ? (
         <Button
           type="danger"
-          htmlType="submit"
-          name="intent"
-          value="delete"
+          onClick={handleDeleteClick}
           block
         >
           Delete

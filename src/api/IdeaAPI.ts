@@ -34,11 +34,7 @@ async function getIdeaList(
       })
     : ideas;
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(adaptProductRequestsToIdeaList(sortedIdeas as any));
-    }, 1000);
-  });
+  return adaptProductRequestsToIdeaList(sortedIdeas as any);
 }
 
 async function getIdeaById(id: string): Promise<IdeaDetails> {
@@ -99,7 +95,7 @@ async function addNewIdea(idea: Idea): Promise<Idea> {
 }
 
 async function deleteIdea(id: string): Promise<string> {
-  const deletedIdea = await IdeaModel.findByIdAndDelete(id);
+  const deletedIdea = await IdeaModel.findOneAndDelete({ id: id }).exec();
   if (!deletedIdea) {
     throw new Error(`Idea item with id ${id} was not found`);
   }

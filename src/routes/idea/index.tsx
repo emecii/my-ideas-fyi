@@ -1,5 +1,5 @@
-import { Params, ActionFunctionArgs, useParams, defer } from "react-router-dom";
-import { Idea, IdeaDetails, Comment, CommentReply } from "src/interfaces/Idea";
+import { Params, ActionFunctionArgs, useParams, defer, useLoaderData } from "react-router-dom";
+import { Idea, IdeaDetails, Comment, CommentReply, LoaderData } from "src/interfaces/Idea";
 import { updateCurrentUser, updateIdeaById } from "@api/IdeaAPI";
 import IdeaDetailsPage from "../../pages/IdeaDetails";
 import { useAuth } from "@clerk/clerk-react";
@@ -27,13 +27,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   if (!params.ideaId) {
     throw new Error("Idea id missing");
   }
-  if (!params.userId) {
-    throw new Error("User id missing");
-  }
-
-  const idea = getIdeaById(params.ideaId);
-
-  return defer({ data: Promise.all([idea]) });
+  const idea = await getIdeaById(params.ideaId);
+  return {idea: idea};
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -138,10 +133,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export default function IdeaDetailsRoute() {
   const params = useParams();
   const ideaId = params.ideaId || "";
+  const loaderData = useLoaderData() as LoaderData;
   const { isSignedIn } = useAuth();
   if (!isSignedIn) {
     return <RootRoute />;
   } else {
-    return <IdeaDetailsPage ideaId={ideaId} />;
+    return <IdeaDetailsPage ideaId={ideaId} idea={loaderData.idea}/>;
   }
 }

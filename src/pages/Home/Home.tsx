@@ -1,5 +1,5 @@
 import { Suspense, useState } from "react";
-import { Await, redirect, useSearchParams, useSubmit } from "react-router-dom";
+import { Await, redirect, useLoaderData, useSearchParams, useSubmit } from "react-router-dom";
 import { CurrentUser, Idea, Vote } from "src/interfaces/Idea";
 import { ReactComponent as ChevronIcon } from "@assets/chevron-icon.svg";
 import { ReactComponent as BulbIcon } from "@assets/bulb-icon.svg";
@@ -54,9 +54,20 @@ const sortByOptions = [
   { label: "Least Comments", value: "lessComments" },
 ];
 
+interface HomeLoaderData {
+  ideas: Idea[];
+  q: string;
+}
+
 function HomePage() {
   const [searchParams] = useSearchParams();
-  const { ideas, loading } = useHomeData();
+  const homeLoaderData = useLoaderData() as HomeLoaderData;
+  var loading = false;
+  if (!homeLoaderData) {
+    loading = true;
+  }
+  const ideas = homeLoaderData.ideas;
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -135,7 +146,12 @@ function IdeaListHeader({ loading }: { loading: boolean }) {
     return null;
   }
   const submit = useSubmit();
-  const { ideas } = useHomeData();
+  const homeLoaderData = useLoaderData() as HomeLoaderData;
+  var loading = false;
+  if (!homeLoaderData) {
+    loading = true;
+  }
+  const ideas = homeLoaderData.ideas;
   const [searchParams] = useSearchParams();
   const defaultSortingOption =
     sortByOptions.find(
@@ -182,12 +198,17 @@ function IdeaListHeader({ loading }: { loading: boolean }) {
 }
 
 function IdeaList() {
-  const { ideas } = useHomeData();
   const { userId } = useAuth();
   const { user } = useUser();
   if (!userId) {
     return null;
   }
+  const homeLoaderData = useLoaderData() as HomeLoaderData;
+  var loading = false;
+  if (!homeLoaderData) {
+    loading = true;
+  }
+  const ideas = homeLoaderData.ideas;
 
   return (
     <section className={styles.mainContent}>

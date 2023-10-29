@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootRoute, {
   loader as homeLoader,
@@ -24,6 +23,8 @@ function App() {
     {
       path: "/",
       element: <RootRoute />,
+      action: homeAction,
+      loader: homeLoader,
     },
     {
       path: "/sign-in/*",

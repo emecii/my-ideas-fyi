@@ -8,6 +8,10 @@ export type IdeaTag =
 
 export type IdeaStatus = "planned" | "in-progress" | "live" | "suggestion";
 
+export interface LoaderData {
+  idea: IdeaDetails;
+}
+
 export interface Idea {
   id: string;
   title: string;
